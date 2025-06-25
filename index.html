@@ -1,16 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panic Button</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
-    <h1>Emergency Panic Button</h1>
-    <p>Click the button below to share your live location with your contacts.</p>
-    <button id="panicBtn">🔴 Send Location Alert</button>
+    <h1>Emergency Panic Alert</h1>
+    
+    <form id="panicForm">
+      <input type="text" id="senderName" placeholder="Your Name" required>
+      <textarea id="customMsg" placeholder="Optional Message"></textarea>
+      
+      <label>Emergency Contact Emails (comma-separated):</label>
+      <input type="email" id="emails" multiple required placeholder="e.g., john@example.com, jane@example.com">
+
+      <button type="submit" id="panicBtn">🔴 Send Location Alert</button>
+    </form>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
