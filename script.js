@@ -1,15 +1,17 @@
-// Initialize EmailJS
+// ✅ Initialize EmailJS
 (function () {
-  emailjs.init("SlAP2_iUIVPEU5Jjr"); // Your actual EmailJS user ID
+  emailjs.init("SlAP2_iUIVPEU5Jjr");
 })();
 
-// Form Submit Handler
+// ✅ Handle form submission
 document.getElementById("panicForm").addEventListener("submit", function (e) {
   e.preventDefault();
 
   const name = document.getElementById("senderName").value;
   const messageText = document.getElementById("customMsg").value;
   const contacts = document.getElementById("emails").value.split(",").map(e => e.trim());
+  const phoneInput = document.getElementById("phones").value;
+  const phoneNumbers = phoneInput.split(",").map(p => p.trim());
 
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(position => {
@@ -18,7 +20,7 @@ document.getElementById("panicForm").addEventListener("submit", function (e) {
       const mapLink = `https://maps.google.com/?q=${lat},${lon}`;
       const fullMessage = `🚨 PANIC ALERT from ${name}\n${messageText}\nLocation: ${mapLink}`;
 
-      // Send email to each contact
+      // ✅ Send Email to each contact
       contacts.forEach(contactEmail => {
         emailjs.send("service_kzv0bup", "template_xyz123", {
           to_email: contactEmail,
@@ -26,24 +28,47 @@ document.getElementById("panicForm").addEventListener("submit", function (e) {
           message: fullMessage,
         })
         .then(() => {
-          console.log(`✅ Sent to ${contactEmail}`);
+          console.log(`✅ Email sent to ${contactEmail}`);
         })
         .catch(err => {
-          console.error(`❌ Failed to send to ${contactEmail}`, err);
+          console.error(`❌ Email failed to ${contactEmail}`, err);
         });
       });
 
-      alert("✅ Location sent to all emergency contacts!");
+      // ✅ Send SMS via backend
+      fetch("http://localhost:5000/send-sms", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          toNumbers: phoneNumbers,
+          message: fullMessage
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          console.log("✅ SMS sent!");
+        } else {
+          console.error("❌ SMS failed:", data.error);
+        }
+      })
+      .catch(err => {
+        console.error("❌ Network/Server error:", err);
+      });
+
+      alert("🚀 Alert sent via Email and SMS!");
 
     }, () => {
       alert("❌ Location permission denied.");
     });
   } else {
-    alert("❌ Geolocation not supported by your browser.");
+    alert("❌ Geolocation not supported.");
   }
 });
 
-// Voice Activation Feature (say "help")
+// ✅ Voice activation ("help")
 window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
 recognition.continuous = true;
@@ -51,7 +76,7 @@ recognition.continuous = true;
 recognition.onresult = function (event) {
   const transcript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
   if (transcript.includes("help")) {
-    document.getElementById("panicBtn").click(); // Trigger form submission
+    document.getElementById("panicBtn").click(); // Triggers form submission
     recognition.stop();
   }
 };
