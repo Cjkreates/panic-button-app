@@ -12,6 +12,8 @@ document.getElementById("panicForm").addEventListener("submit", function (e) {
   const contacts = document.getElementById("emails").value.split(",").map(e => e.trim());
   const phoneInput = document.getElementById("phones").value;
   const phoneNumbers = phoneInput.split(",").map(p => p.trim());
+  const validEmails = contacts.filter(email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
+
 
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(position => {
