@@ -98,3 +98,6 @@ if (transcript.includes("help") && !panicTriggered) {
   document.getElementById("panicBtn").click();
   recognition.stop();
 }
+.catch(err => {
+  console.error(`❌ Email failed to ${contactEmail}`, err);
+});
