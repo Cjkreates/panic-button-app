@@ -86,3 +86,10 @@ recognition.onerror = function (e) {
 };
 
 recognition.start();
+let panicTriggered = false;
+
+if (transcript.includes("help") && !panicTriggered) {
+  panicTriggered = true;
+  document.getElementById("panicBtn").click();
+  recognition.stop();
+}
