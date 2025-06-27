@@ -13,6 +13,9 @@ document.getElementById("panicForm").addEventListener("submit", function (e) {
   const phoneInput = document.getElementById("phones").value;
   const phoneNumbers = phoneInput.split(",").map(p => p.trim());
   const validEmails = contacts.filter(email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
+  const timestamp = new Date().toLocaleString();
+  const fullMessage = `🚨 PANIC ALERT from ${name}\n${messageText}\nTime: ${timestamp}\nLocation: ${mapLink}`;
+
 
 
   if (navigator.geolocation) {
