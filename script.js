@@ -13,20 +13,17 @@ document.getElementById("panicForm").addEventListener("submit", function (e) {
   const phoneInput = document.getElementById("phones").value;
   const phoneNumbers = phoneInput.split(",").map(p => p.trim());
   const validEmails = contacts.filter(email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
-  const timestamp = new Date().toLocaleString();
-  const fullMessage = `🚨 PANIC ALERT from ${name}\n${messageText}\nTime: ${timestamp}\nLocation: ${mapLink}`;
-
-
 
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(position => {
       const lat = position.coords.latitude;
       const lon = position.coords.longitude;
       const mapLink = `https://maps.google.com/?q=${lat},${lon}`;
-      const fullMessage = `🚨 PANIC ALERT from ${name}\n${messageText}\nLocation: ${mapLink}`;
+      const timestamp = new Date().toLocaleString();
+      const fullMessage = `🚨 PANIC ALERT from ${name}\n${messageText}\nTime: ${timestamp}\nLocation: ${mapLink}`;
 
       // ✅ Send Email to each contact
-      contacts.forEach(contactEmail => {
+      validEmails.forEach(contactEmail => {
         emailjs.send("service_kzv0bup", "template_xyz123", {
           to_email: contactEmail,
           to_name: contactEmail,
@@ -64,7 +61,6 @@ document.getElementById("panicForm").addEventListener("submit", function (e) {
       });
 
       alert("🚀 Alert sent via Email and SMS!");
-
     }, () => {
       alert("❌ Location permission denied.");
     });
@@ -78,9 +74,12 @@ window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecogn
 const recognition = new SpeechRecognition();
 recognition.continuous = true;
 
+let panicTriggered = false;
+
 recognition.onresult = function (event) {
   const transcript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
-  if (transcript.includes("help")) {
+  if (transcript.includes("help") && !panicTriggered) {
+    panicTriggered = true;
     document.getElementById("panicBtn").click(); // Triggers form submission
     recognition.stop();
   }
@@ -91,13 +90,3 @@ recognition.onerror = function (e) {
 };
 
 recognition.start();
-let panicTriggered = false;
-
-if (transcript.includes("help") && !panicTriggered) {
-  panicTriggered = true;
-  document.getElementById("panicBtn").click();
-  recognition.stop();
-}
-.catch(err => {
-  console.error(`❌ Email failed to ${contactEmail}`, err);
-});
